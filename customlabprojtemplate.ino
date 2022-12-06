@@ -1,6 +1,15 @@
+#include <VirtualWire.h>
 //define global inputs here
+int IRSensor = A1;
 
 //define global outputs here
+int RelayPin = A0;
+//define global variables here
+int fire = 0;
+int globalPosition = 0;
+int firstPos = 0;
+int secondPos = 0;
+int doneMoving = 1;
 
 
 typedef struct task {
@@ -12,11 +21,11 @@ typedef struct task {
 } task;
 
 int delay_gcd;
-const unsigned short tasksNum = 8;
+const unsigned short tasksNum =4;
 task tasks[tasksNum];
 
 enum insertStateName{ /* insert states here*/};
-int stateName_Tick(int state{
+int stateName_Tick(int state){
     switch(state){
         case /*state1*/:
             break;
@@ -35,7 +44,8 @@ void setup(){
     //initialize inputs here
 
     // initialize outputs here
-
+    pinMode(relayPin, OUTPUT);
+    vw_setup(2000); // Bits per sec
 
     unsigned char i = 0;
   
@@ -44,6 +54,8 @@ void setup(){
     tasks[i].elapsedTime = 0;
     tasks[i].TickFct = &;
     i++;
+
+    Serial.begin(9600);
 }
 void loop(){
     unsigned char i;
