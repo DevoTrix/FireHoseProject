@@ -9,7 +9,7 @@ Having the pump move around provided too much trouble to realistically do. havin
 ## BUGS
 
 ## HardWare
-  *Computing
+  * Computing
     * 2 x Elegoo Arduino Uno R3 
   * Sensors
     * IR Sensor
