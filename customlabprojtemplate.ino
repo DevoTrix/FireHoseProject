@@ -24,8 +24,25 @@ int delay_gcd;
 const unsigned short tasksNum =4;
 task tasks[tasksNum];
 
-enum pumpState{ Pump_INIT, OFF, ON};
-int stateName_Tick(int state){
+enum servo_States{ Servo_INIT};
+
+int servo_Tick(int state1){
+    switch(state1){
+        case Servo_INIT:
+            break;
+    }
+    switch(state1){
+        default:
+            break;
+    }
+    return state1;
+}
+
+//controls the pump
+
+enum pump_State{ Pump_INIT, OFF, ON};
+
+int pump_Tick(int state2){
     switch(state2){
         case Pump_INIT:
             state2 = OFF; 
@@ -59,6 +76,47 @@ int stateName_Tick(int state){
     return state2;
 }
 
+
+//transmitter code
+
+enum trans_State{ Trans_INIT, noFire, isFire};
+
+int trans_Tick(int state3){
+    switch(state3){
+        case Trans_INIT:
+            state = noFire;
+            break;
+        case noFire:
+            if(fire == 1){
+                state3 = isFire;
+            }
+            else{
+                state3 = noFire;
+            }
+            break;
+        case isFire:
+            if(fire == 0){
+                state3 = noFire;
+            }
+            else{
+                state3 = isFire;
+            }
+            break;
+    }
+    switch(state3){
+        case noFire:
+            char *message = "0 ";
+            message += millis();
+            vw_send((uint8_t *)message, strlen(message));
+            break;
+        case isFire:
+            char *message = "1 ";
+            message += millis();
+            vw_send((uint8_t *)message, strlen(message));
+            break;
+    }
+    return state3;
+}
 
 void setup(){
     
