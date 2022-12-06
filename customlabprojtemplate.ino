@@ -9,8 +9,9 @@ int fire = 0;
 int globalPosition = 0;
 int firstPos = 0;
 int secondPos = 0;
+int firePos = 0;
 int doneMoving = 1;
-
+int delay = 0;
 
 typedef struct task {
     int state;
@@ -24,14 +25,207 @@ int delay_gcd;
 const unsigned short tasksNum =4;
 task tasks[tasksNum];
 
-enum servo_States{ Servo_INIT};
-
+enum servo_States{ Servo_INIT, Left, Right, F1, F2, Calc, S1, S2, Fire, Write};
+// servo logic
 int servo_Tick(int state1){
     switch(state1){
         case Servo_INIT:
+            state1 = Left;
+            break;
+        case Left: //sweeps left;
+            int sensor = analogRead(IRSensor);
+            int flame = map(sensor,0, 1024, 0, 1);
+            if(delay == 0){
+                if(flame == 1){
+                    state1 = F1;
+                }
+                else if(globalPosition <180){
+                    state1 = Left;
+                }
+                else if(globalPosition >= 180){
+                    state1 = Right;
+                }
+            }
+            break;
+        case Right: //sweeps right
+            int sensor = analogRead(IRSensor);
+            int flame = map(sensor,0, 1024, 0, 1);
+            if(delay==0){
+                if(flame == 1){
+                    state1 = F1;
+                }
+                else if(globalPosition > 0){
+                    state1 = Right;
+                }
+                else if(globalPosition <= 0){
+                    state1 = Left;
+                }
+            }
+            break;
+        case F1: //locates the left side before it stops detecting
+            int sensor = analogRead(IRSensor);
+            int flame = map(sensor,0, 1024, 0, 1);
+            if(delay == 0){
+                if((flame == 1) ||  (globalPosition >0 && globalPosition <= 180)){
+                    state1 = F1;
+                }
+                else if(flame == 0){
+                    firstPos = globalPosition;
+                    state1 = F2;
+                }
+                else if(globalPosition <= 0){
+                    firstPos = 0;
+                    state1 = F2;
+                }
+                else if(globalPosition >= 180){
+                    firstPos = 180;
+                    state1 = F2;
+                }
+            }
+            break;
+        case F2: //detects right side
+            int sensor = analogRead(IRSensor);
+            int flame = map(sensor,0, 1024, 0, 1);
+            if(delay ==0){
+                if((flame == 1) ||  (globalPosition >0 && globalPosition <= 180)){
+                    state1 = F2;
+                }
+                else if(flame == 0){
+                    firstPos = globalPosition;
+                    state1 = Calc;
+                }
+                else if(globalPosition <= 0){
+                    firstPos = 0;
+                    state1 = Calc;
+                }
+                else if(globalPosition >= 180){
+                    firstPos = 180;
+                    state1 = Calc;
+                }
+            }
+            break;
+        case Calc: //calculates the fire position using the midpoint
+            if(globalPosition > firePos){
+                state1 = S2;
+            }
+            else if(globalPosition < firePos){
+                state1 = S1;
+            }
+            else if(globalPosition == firePos){
+                state1 = Fire;
+            }
+            break;
+        case S1: // moves hose to the left if position is too low
+            if(delay == 0){
+                if(globalPosition == firePos){
+                    state1 = Fire;
+                }
+                else {
+                    state1 = S1;
+                }
+            }
+            break;
+        case S2: // moves to the right if position is too high
+            if(delay == 0){
+                if(globalPosition == firePos){
+                    state1 = Fire;
+                }
+                else {
+                    state1 = S1;
+                }
+            }
+            break;
+        case Fire: //sends a signal to the pump state to turn on the pump
+            int sensor = analogRead(IRSensor);
+            int flame = map(sensor,0, 1024, 0, 1);
+            if(flame == 0){
+                fire = 0;
+                state1 = Write;
+            }
+            else{
+                state1 = Fire;
+            }
+            break;
+        case Write: //resets position of the hose back to 0. 
+            if(delay == 0){
+                if(globalPosition != 0){
+                    state1 = Write;
+                }
+                else if(globalPosition == 0){
+                    state1 = Left;
+                }
+            }
             break;
     }
     switch(state1){
+        case Left:
+            globalPosition = globalPosition + 1;
+            int val = (globalPosition * 10) + 500;
+            digitalWrite(pin, HIGH);
+            delay = 1;
+            delayMicroseconds(val);
+            delay = 0;
+            digitalWrite(pin,LOW);
+            break;
+        case Right:
+            globalPosition = globalPosition - 1;
+            int val = (globalPosition * 10) + 500;
+            digitalWrite(pin, HIGH);
+            delay = 1;
+            delayMicroseconds(val);
+            delay = 0;
+            digitalWrite(pin,LOW);
+            break;
+        case F1:
+            globalPosition = globalPosition + 1;
+            int val = (globalPosition * 10) + 500;
+            digitalWrite(pin, HIGH);
+            delay = 1;
+            delayMicroseconds(val);
+            delay = 0;
+            digitalWrite(pin,LOW);
+            break;
+        case F2:
+            globalPosition = globalPosition - 1;
+            int val = (globalPosition * 10) + 500;
+            digitalWrite(pin, HIGH);
+            delay = 1;
+            delayMicroseconds(val);
+            delay = 0;
+            digitalWrite(pin,LOW);
+            break;
+        case Calc:
+            firePos = (firstPos - secondPos) / 2;
+        case S1:
+            globalPosition = globalPosition + 1;
+            int val = (globalPosition * 10) + 500;
+            digitalWrite(pin, HIGH);
+            delay = 1;
+            delayMicroseconds(val);
+            delay = 0;
+            digitalWrite(pin,LOW);
+            break;
+        case S2:
+            globalPosition = globalPosition - 1;
+            int val = (globalPosition * 10) + 500;
+            digitalWrite(pin, HIGH);
+            delay = 1;
+            delayMicroseconds(val);
+            delay = 0;
+            digitalWrite(pin,LOW);
+            break;
+        case Fire:
+            fire = 1;
+            break;
+        case Write:
+            globalPosition = globalPosition - 1;
+            int val = (globalPosition * 10) + 500;
+            digitalWrite(pin, HIGH);
+            delay = 1;
+            delayMicroseconds(val);
+            delay = 0;
+            digitalWrite(pin,LOW);
+            break;
         default:
             break;
     }
@@ -48,7 +242,7 @@ int pump_Tick(int state2){
             state2 = OFF; 
             break;
         case OFF:
-            if(fire == 1){
+            if(fire == 1){ //if the fire is detected, set relay to HIGH
                 digitalWrite(relayPin, HIGH);
                 state2 = ON;
             }
@@ -57,7 +251,7 @@ int pump_Tick(int state2){
             }
             break;
         case ON:
-            if(fire == 0){
+            if(fire == 0){ //if fire is not detected, set relay to LOW
                 digitalWrite(relayPin, LOW);
                 state2 = OFF;
             }
