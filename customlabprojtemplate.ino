@@ -1,4 +1,4 @@
-#include <VirtualWire.h>
+#include <VirtualWire.h> //only library i would be using
 //define global inputs here
 int IRSensor = A1;
 
@@ -22,7 +22,7 @@ typedef struct task {
 } task;
 
 int delay_gcd;
-const unsigned short tasksNum =4;
+const unsigned short tasksNum = 3;
 task tasks[tasksNum];
 
 enum servo_States{ Servo_INIT, Left, Right, F1, F2, Calc, S1, S2, Fire, Write};
@@ -33,16 +33,16 @@ int servo_Tick(int state1){
             state1 = Left;
             break;
         case Left: //sweeps left;
-            int sensor = analogRead(IRSensor);
-            int flame = map(sensor,0, 1024, 0, 1);
-            if(delay == 0){
-                if(flame == 1){
+            int sensor = analogRead(IRSensor); //analgoRead gives off a variety of numbers
+            int flame = map(sensor,0, 1024, 0, 1); //maps those numbers to 0 or 1, 1 being there is a fire.
+            if(delay == 0){  //make sure that the delayMicrosecond isn't being used.
+                if(flame == 1){ //if flame is detected, start the calibration to detect the angle of the fire. 
                     state1 = F1;
                 }
-                else if(globalPosition <180){
+                else if(globalPosition <180){  //keeps the servo turning left till 180
                     state1 = Left;
                 }
-                else if(globalPosition >= 180){
+                else if(globalPosition >= 180){ //reverses direction once reached the 180 mark.
                     state1 = Right;
                 }
             }
@@ -66,18 +66,18 @@ int servo_Tick(int state1){
             int sensor = analogRead(IRSensor);
             int flame = map(sensor,0, 1024, 0, 1);
             if(delay == 0){
-                if((flame == 1) ||  (globalPosition >0 && globalPosition <= 180)){
+                if((flame == 1) ||  (globalPosition >0 && globalPosition <= 180)){ // keeps it going left till it stops detecting or reached the end
                     state1 = F1;
                 }
-                else if(flame == 0){
+                else if(flame == 0){ //if fire is no longer detected, stop and mark;
                     firstPos = globalPosition;
                     state1 = F2;
                 }
-                else if(globalPosition <= 0){
+                else if(globalPosition <= 0){ //if it is near the edge mark the edge,
                     firstPos = 0;
                     state1 = F2;
                 }
-                else if(globalPosition >= 180){
+                else if(globalPosition >= 180){//if it is near the edge mark the edge,
                     firstPos = 180;
                     state1 = F2;
                 }
@@ -87,7 +87,7 @@ int servo_Tick(int state1){
             int sensor = analogRead(IRSensor);
             int flame = map(sensor,0, 1024, 0, 1);
             if(delay ==0){
-                if((flame == 1) ||  (globalPosition >0 && globalPosition <= 180)){
+                if((flame == 1) ||  (globalPosition >0 && globalPosition <= 180)){ //flipped version of F2
                     state1 = F2;
                 }
                 else if(flame == 0){
@@ -116,7 +116,7 @@ int servo_Tick(int state1){
             }
             break;
         case S1: // moves hose to the left if position is too low
-            if(delay == 0){
+            if(delay == 0){ //this delay isnt the dely function doesn't pause the program like delay does, just ignores other conditions if delay is checked.  mainly to not fuck with the delayMicrosecond() used to control the servo. 
                 if(globalPosition == firePos){
                     state1 = Fire;
                 }
@@ -136,7 +136,7 @@ int servo_Tick(int state1){
             }
             break;
         case Fire: //sends a signal to the pump state to turn on the pump
-            int sensor = analogRead(IRSensor);
+            int sensor = analogRead(IRSensor); 
             int flame = map(sensor,0, 1024, 0, 1);
             if(flame == 0){
                 fire = 0;
@@ -158,7 +158,7 @@ int servo_Tick(int state1){
             break;
     }
     switch(state1){
-        case Left:
+        case Left: //moves the servo https://create.arduino.cc/projecthub/nannigalaxy/control-servo-motor-without-library-1d8606 basic idea from this on how to do it without the library
             globalPosition = globalPosition + 1;
             int val = (globalPosition * 10) + 500;
             digitalWrite(pin, HIGH);
