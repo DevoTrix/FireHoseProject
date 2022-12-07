@@ -322,12 +322,25 @@ void setup(){
 
     unsigned char i = 0;
   
-    tasks[i].state = ;
-    tasks[i].period = 10;
+    tasks[i].state = Servo_INIT;
+    tasks[i].period = 100;
     tasks[i].elapsedTime = 0;
-    tasks[i].TickFct = &;
+    tasks[i].TickFct = &Servo_Tick();
     i++;
-
+    
+    tasks[i].state = Pump_INIT;
+    tasks[i].period = 100;
+    tasks[i].elapsedTime = 0;
+    tasks[i].TickFct = &Pump_Tick();
+    i++;
+    
+    tasks[i].state = Trans_INIT;
+    tasks[i].period = 100;
+    tasks[i].elapsedTime = 0;
+    tasks[i].TickFct = &Trans_Tick();
+    i++;
+    
+    
     Serial.begin(9600);
 }
 void loop(){
