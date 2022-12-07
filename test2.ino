@@ -1,4 +1,4 @@
-//#include <VirtualWire.h> //only library i would be using
+#include <RH_ASK.h> //only library i would be using
 //define global inputs here
 int IRSensor = A1;
 
@@ -13,7 +13,7 @@ int secondPos = 0;
 int firePos = 0;
 int doneMoving = 1;
 int delays = 0;
-
+RH_ASK driver;
 typedef struct task {
     int state;
     unsigned long period;
@@ -23,7 +23,7 @@ typedef struct task {
 } task;
 
 int delay_gcd;
-const unsigned short tasksNum = 3;
+const unsigned short tasksNum = 4;
 task tasks[tasksNum];
 
 enum Servo_States{ Servo_INIT, Left, Right, F1, F2, Calc, S1, S2, Fire, Write};
@@ -161,7 +161,9 @@ int Servo_Tick(int state1){
     switch(state1){
         case Left: //moves the servo https://create.arduino.cc/projecthub/nannigalaxy/control-servo-motor-without-library-1d8606 basic idea from this on how to do it without the library
             globalPosition = globalPosition + 1;
+                      
             int val = (globalPosition * 10) + 500;
+            Serial.println(val);  
             digitalWrite(pin, HIGH);
             delays = 1;
             delayMicroseconds(val);
@@ -171,6 +173,7 @@ int Servo_Tick(int state1){
         case Right:
             globalPosition = globalPosition - 1;
             val = (globalPosition * 10) + 500;
+            Serial.println(val);         
             digitalWrite(pin, HIGH);
             delays = 1;
             delayMicroseconds(val);
@@ -180,6 +183,7 @@ int Servo_Tick(int state1){
         case F1:
             globalPosition = globalPosition + 1;
             val = (globalPosition * 10) + 500;
+            Serial.println(val);             
             digitalWrite(pin, HIGH);
             delays = 1;
             delayMicroseconds(val);
@@ -189,6 +193,7 @@ int Servo_Tick(int state1){
         case F2:
             globalPosition = globalPosition - 1;
             val = (globalPosition * 10) + 500;
+            Serial.println(val); 
             digitalWrite(pin, HIGH);
             delays = 1;
             delayMicroseconds(val);
@@ -197,9 +202,11 @@ int Servo_Tick(int state1){
             break;
         case Calc:
             firePos = (firstPos - secondPos) / 2;
+            Serial.println("hello");
         case S1:
             globalPosition = globalPosition + 1;
             val = (globalPosition * 10) + 500;
+            Serial.println(val); 
             digitalWrite(pin, HIGH);
             delays = 1;
             delayMicroseconds(val);
@@ -210,6 +217,7 @@ int Servo_Tick(int state1){
             globalPosition = globalPosition - 1;
             val = (globalPosition * 10) + 500;
             digitalWrite(pin, HIGH);
+            Serial.println(val); 
             delays = 1;
             delayMicroseconds(val);
             delays = 0;
@@ -217,10 +225,12 @@ int Servo_Tick(int state1){
             break;
         case Fire:
             fire = 1;
+            Serial.println("hello"); 
             break;
         case Write:
             globalPosition = globalPosition - 1;
             val = (globalPosition * 10) + 500;
+            Serial.println(val); 
             digitalWrite(pin, HIGH);
             delays = 1;
             delayMicroseconds(val);
@@ -296,44 +306,44 @@ int Pump_Tick(int state2){
 
 //transmitter code
 
-// enum trans_State{ Trans_INIT, noFire, isFire};
+enum trans_State{ Trans_INIT, noFire, isFire};
 
-// int trans_Tick(int state3){
-//     switch(state3){
-//         case Trans_INIT:
-//             state = noFire;
-//             break;
-//         case noFire:
-//             if(fire == 1){
-//                 state3 = isFire;
-//             }
-//             else{
-//                 state3 = noFire;
-//             }
-//             break;
-//         case isFire:
-//             if(fire == 0){
-//                 state3 = noFire;
-//             }
-//             else{
-//                 state3 = isFire;
-//             }
-//             break;
-//     }
-//     switch(state3){
-//         case noFire:
-//             char *message = "0 ";
-//             message += millis();
-//             vw_send((uint8_t *)message, strlen(message));
-//             break;
-//         case isFire:
-//             char *message = "1 ";
-//             message += millis();
-//             vw_send((uint8_t *)message, strlen(message));
-//             break;
-//     }
-//     return state3;
-// }
+int Trans_Tick(int state3){
+    switch(state3){
+        case Trans_INIT:
+            state3 = noFire;
+            break;
+        case noFire:
+            if(fire == 1){
+                state3 = isFire;
+            }
+            else{
+                state3 = noFire;
+            }
+            break;
+        case isFire:
+            if(fire == 0){
+                state3 = noFire;
+            }
+            else{
+                state3 = isFire;
+            }
+            break;
+    }
+    switch(state3){
+        case noFire:
+            char *message = "0 ";
+            message += millis();
+            driver.send((uint8_t *)message, strlen(message));
+            break;
+        case isFire:
+            *message = "1 ";
+            message += millis();
+            driver.send((uint8_t *)message, strlen(message));
+            break;
+    }
+    return state3;
+}
 
 void setup(){
     
@@ -343,6 +353,10 @@ void setup(){
     pinMode(relayPin, OUTPUT);
     //vw_setup(2000); // Bits per sec
 
+    if (!driver.init()){ 
+        Serial.println("init of receiver failed"); 
+    } 
+    
     unsigned char i = 0;
   
     tasks[i].state = Servo_INIT;
@@ -363,13 +377,13 @@ void setup(){
     tasks[i].period = 100;
     tasks[i].elapsedTime = 0;
     tasks[i].TickFct = &Pump_Tick;
+    i++;
     
-    
-    // tasks[i].state = Trans_INIT;
-    // tasks[i].period = 100;
-    // tasks[i].elapsedTime = 0;
-    // tasks[i].TickFct = &Trans_Tick();
-    // i++;
+    tasks[i].state = Trans_INIT;
+    tasks[i].period = 100;
+    tasks[i].elapsedTime = 0;
+    tasks[i].TickFct = &Trans_Tick;
+   // i++;
     
     delay_gcd = 20;
     Serial.begin(9600);
