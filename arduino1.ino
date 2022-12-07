@@ -1,4 +1,5 @@
 #include <RH_ASK.h> //only library i would be using
+#include <SPI.h>
 //define global inputs here
 int IRSensor = A1;
 
@@ -332,14 +333,16 @@ int Trans_Tick(int state3){
     }
     switch(state3){
         case noFire:
-            char *message = "0 ";
-            message += millis();
+            char *message = "0";
+            //message += millis();
             driver.send((uint8_t *)message, strlen(message));
+            driver.waitPacketSent();
             break;
         case isFire:
-            *message = "1 ";
-            message += millis();
+            *message = "1";
+            //message += millis();
             driver.send((uint8_t *)message, strlen(message));
+            driver.waitPacketSent();  
             break;
     }
     return state3;
@@ -353,9 +356,7 @@ void setup(){
     pinMode(relayPin, OUTPUT);
     //vw_setup(2000); // Bits per sec
 
-    if (!driver.init()){ 
-        Serial.println("init of receiver failed"); 
-    } 
+    driver.init();
     
     unsigned char i = 0;
   
