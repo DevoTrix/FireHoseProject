@@ -4,6 +4,7 @@ int IRSensor = A1;
 
 //define global outputs here
 int relayPin = A0;
+int pin = 7;
 //define global variables here
 int fire = 0;
 int globalPosition = 0;
