@@ -1,4 +1,4 @@
-#include <VirtualWire.h> //only library i would be using
+//#include <VirtualWire.h> //only library i would be using
 //define global inputs here
 int IRSensor = A1;
 
@@ -273,44 +273,44 @@ int pump_Tick(int state2){
 
 //transmitter code
 
-enum trans_State{ Trans_INIT, noFire, isFire};
+// enum trans_State{ Trans_INIT, noFire, isFire};
 
-int trans_Tick(int state3){
-    switch(state3){
-        case Trans_INIT:
-            state = noFire;
-            break;
-        case noFire:
-            if(fire == 1){
-                state3 = isFire;
-            }
-            else{
-                state3 = noFire;
-            }
-            break;
-        case isFire:
-            if(fire == 0){
-                state3 = noFire;
-            }
-            else{
-                state3 = isFire;
-            }
-            break;
-    }
-    switch(state3){
-        case noFire:
-            char *message = "0 ";
-            message += millis();
-            vw_send((uint8_t *)message, strlen(message));
-            break;
-        case isFire:
-            char *message = "1 ";
-            message += millis();
-            vw_send((uint8_t *)message, strlen(message));
-            break;
-    }
-    return state3;
-}
+// int trans_Tick(int state3){
+//     switch(state3){
+//         case Trans_INIT:
+//             state = noFire;
+//             break;
+//         case noFire:
+//             if(fire == 1){
+//                 state3 = isFire;
+//             }
+//             else{
+//                 state3 = noFire;
+//             }
+//             break;
+//         case isFire:
+//             if(fire == 0){
+//                 state3 = noFire;
+//             }
+//             else{
+//                 state3 = isFire;
+//             }
+//             break;
+//     }
+//     switch(state3){
+//         case noFire:
+//             char *message = "0 ";
+//             message += millis();
+//             vw_send((uint8_t *)message, strlen(message));
+//             break;
+//         case isFire:
+//             char *message = "1 ";
+//             message += millis();
+//             vw_send((uint8_t *)message, strlen(message));
+//             break;
+//     }
+//     return state3;
+// }
 
 void setup(){
     
@@ -332,15 +332,15 @@ void setup(){
     tasks[i].period = 100;
     tasks[i].elapsedTime = 0;
     tasks[i].TickFct = &Pump_Tick();
-    i++;
+    //i++;
     
-    tasks[i].state = Trans_INIT;
-    tasks[i].period = 100;
-    tasks[i].elapsedTime = 0;
-    tasks[i].TickFct = &Trans_Tick();
-    i++;
+    // tasks[i].state = Trans_INIT;
+    // tasks[i].period = 100;
+    // tasks[i].elapsedTime = 0;
+    // tasks[i].TickFct = &Trans_Tick();
+    // i++;
     
-    
+    delay_gcd = 100;
     Serial.begin(9600);
 }
 void loop(){
