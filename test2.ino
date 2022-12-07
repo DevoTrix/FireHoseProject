@@ -35,9 +35,9 @@ int Servo_Tick(int state1){
             break;
         case Left: //sweeps left;
             int sensor = analogRead(IRSensor); //analgoRead gives off a variety of numbers
-            int flame = map(sensor,0, 1024, 0, 1); //maps those numbers to 0 or 1, 1 being there is a fire.
+            int flame = map(sensor,20, 1024, 0, 1); //maps those numbers to 0 or 1, 1 being there is a fire.
             //if(delay == 0){  //make sure that the delayMicrosecond isn't being used.
-                if(flame == 1){ //if flame is detected, start the calibration to detect the angle of the fire. 
+                if(flame == 0){ //if flame is detected, start the calibration to detect the angle of the fire. 
                     state1 = F1;
                 }
                 else if(globalPosition <180){  //keeps the servo turning left till 180
@@ -139,7 +139,7 @@ int Servo_Tick(int state1){
         case Fire: //sends a signal to the pump state to turn on the pump
             sensor = analogRead(IRSensor); 
             flame = map(sensor,0, 1024, 0, 1);
-            if(flame == 0){
+            if(flame == 1){
                 fire = 0;
                 state1 = Write;
             }
@@ -249,6 +249,11 @@ int cFire_Tick(int state5){
         fire = 1;
       }
   }
+  switch(state5){
+    default:
+      break;
+  }
+  return state5;
 }
 //controls the pump
 
