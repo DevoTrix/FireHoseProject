@@ -40,7 +40,7 @@ LOTS OF BUGS
 ## Libraries
   * [VirtualWire](http://www.airspayce.com/mikem/arduino/VirtualWire/)
 ## Wiring Diagram
-
+![](https://i.imgur.com/9I0FL1u.png)
 ## Task Diagram
 
 ## SM Diagrams
