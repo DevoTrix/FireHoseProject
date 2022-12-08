@@ -1,6 +1,6 @@
 # CS/EE 120B Custom Laboratory Project Report
 # Autonomous Fire Hose project
- * [demo]:(https://youtu.be/0UkOi1IPzAI)
+ * [demo](https://youtu.be/0UkOi1IPzAI)
 # Joseph Chang
 The Fire Hose Project or FHP aims to increase the safety of households. Using a flame sensor, the FHP detects the location of the source of the fire and controls a 12V pump. The goal is to put the system in front of important areas, that a fire should not occur. The status would be displayed on an LCD that could be placed elsewhere, in case it may not be in a safe area. 
 
