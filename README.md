@@ -30,14 +30,15 @@ LOTS OF BUGS
     * Jumper Wires
     * tubing
     * 12V adapter
-    * Bottle
+    * tub
 ## Complexities
   * Servo
   * Relay + Pump
   * RF transmitter and reciever
   
 ## Libraries
-  * [VirtualWire](http://www.airspayce.com/mikem/arduino/VirtualWire/)
+  * [RadioHead](https://www.airspayce.com/mikem/arduino/RadioHead/)
+  * SPI Library (for compiling)
 ## Wiring Diagram
 ![](https://i.imgur.com/9I0FL1u.png)
 ## Task Diagram
