@@ -1,6 +1,6 @@
 # CS/EE 120B Custom Laboratory Project Report
 # Autonomous Fire Hose project
-[demo]:(}
+[demo]:(https://youtu.be/0UkOi1IPzAI)
 # Joseph Chang
 The Fire Hose Project or FHP aims to increase the safety of households. Using a flame sensor, the FHP detects the location of the source of the fire and controls a 12V pump. The goal is to put the system in front of important areas, that a fire should not occur. The status would be displayed on an LCD that could be placed elsewhere, in case it may not be in a safe area. 
 
@@ -11,8 +11,7 @@ Having the pump move around provided too much trouble to realistically do. havin
 LOTS OF BUGS
  * Servo logic SM doesn't work as it should, despite it should be working. 
  * Servo is also too weak to move the tube.
- * transmitter and reciever not working(maybe fried) logic is ther
- * 
+ * transmitter and reciever not working(maybe fried) logic is there
 
 ## HardWare
   * Computing
@@ -42,5 +41,9 @@ LOTS OF BUGS
 ## Wiring Diagram
 ![](https://i.imgur.com/9I0FL1u.png)
 ## Task Diagram
-
+![](https://i.imgur.com/9Ja0MPY.jpg)
 ## SM Diagrams
+![](https://i.imgur.com/8T5KJXy.jpg)
+![](https://i.imgur.com/oZyrBNI.jpg)
+![](https://i.imgur.com/UUHT5MZ.jpg)
+!
